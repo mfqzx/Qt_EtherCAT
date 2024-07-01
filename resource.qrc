@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pic/logo.png</file>
+        <file>pic/1.png</file>
+        <file>pic/backgrond.png</file>
+        <file>pic/bg.png</file>
+        <file>pic/checked.png</file>
+        <file>pic/unchecked.png</file>
+        <file>pic/down.png</file>
+        <file>pic/high.png</file>
+        <file>pic/left.png</file>
+        <file>pic/low.png</file>
+        <file>pic/right.png</file>
+        <file>pic/up.png</file>
+        <file>pic/chaijun.jpg</file>
+        <file>pic/aaa.jpg</file>
+        <file>pic/close.png</file>
+        <file>pic/loop.png</file>
+        <file>pic/min.png</file>
+        <file>pic/close1.png</file>
+        <file>pic/github.png</file>
+        <file>pic/help.png</file>
+    </qresource>
+</RCC>
