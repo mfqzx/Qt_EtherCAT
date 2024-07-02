@@ -2,7 +2,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "zaux.h"
-
+#include <QDebug>
+#include <QFileInfo>
+#include <QFileDialog>
+#include <QTextCodec>
+#include <QTextBlock>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -21,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->ButtonSD->setEnabled(1);
     ui->toolButton_W->setShortcut(Qt::Key_W);
     ui->toolButton_S->setShortcut(Qt::Key_S);
-    ui->X_plus->setStyleSheet("image: url(:/pic/checked.png)");
+    //ui->X_plus->setStyleSheet("image: url(:/pic/green.png)");
 
 }
 
@@ -109,6 +113,7 @@ void MainWindow::links()
     ui->pushButton->setEnabled(0);
     ui->pushButton_2->setEnabled(1);
     link_flag=1;
+    m_timerid=startTimer(5);
 }
 // 断开
 void MainWindow::on_pushButton_2_clicked()
@@ -192,7 +197,7 @@ void MainWindow::on_pushButton_3_clicked()
     P=(ui->lineEdit->text()).toFloat();
     I=(ui->lineEdit_2->text()).toFloat();
     D=(ui->lineEdit_3->text()).toFloat();
-
+    qDebug()<<x.fuxianwei;
     war.setWindowTitle("提示");
     war.setText("参数保存成功！");
     war.exec();
@@ -231,7 +236,7 @@ void MainWindow::on_pushButton_10_clicked()
     ZAux_Direct_SetSramp(g_handle,0,20);    // 设置梯形速度
     ZAux_Direct_SetUnits(g_handle,0,x.maichongdangliang);   // 设置脉冲当量
     ZAux_Direct_SetFsLimit(g_handle,0,x.zhengxianwei);      // 设置正限位
-    ZAux_Direct_SetRsLimit(g_handle,0,-x.fuxianwei);        // 设置负限位
+    ZAux_Direct_SetRsLimit(g_handle,0,x.fuxianwei);        // 设置负限位
     ZAux_Direct_SetFwdIn(g_handle,0,x.zhengxianwei_IO);     // 设置正限位IO
     ZAux_Direct_SetRevIn(g_handle,0,x.fuxianwei_IO);        // 设置负限位IO
     ZAux_Direct_SetDatumIn(g_handle,0,0);                    // 回零IO
@@ -245,7 +250,7 @@ void MainWindow::on_pushButton_10_clicked()
     ZAux_Direct_SetSramp(g_handle,1,20);    // 设置梯形速度
     ZAux_Direct_SetUnits(g_handle,1,y.maichongdangliang);   // 设置脉冲当量
     ZAux_Direct_SetFsLimit(g_handle,1,y.zhengxianwei);      // 设置正限位
-    ZAux_Direct_SetRsLimit(g_handle,1,-y.fuxianwei);        // 设置负限位
+    ZAux_Direct_SetRsLimit(g_handle,1,y.fuxianwei);        // 设置负限位
     ZAux_Direct_SetFwdIn(g_handle,1,y.zhengxianwei_IO);     // 设置正限位IO
     ZAux_Direct_SetRevIn(g_handle,1,y.fuxianwei_IO);        // 设置负限位IO
     ZAux_Direct_SetDatumIn(g_handle,1,0);                    // 回零IO
@@ -259,7 +264,7 @@ void MainWindow::on_pushButton_10_clicked()
     ZAux_Direct_SetSramp(g_handle,2,20);    // 设置梯形速度
     ZAux_Direct_SetUnits(g_handle,2,z.maichongdangliang);   // 设置脉冲当量
     ZAux_Direct_SetFsLimit(g_handle,2,z.zhengxianwei);      // 设置正限位
-    ZAux_Direct_SetRsLimit(g_handle,2,-z.fuxianwei);        // 设置负限位
+    ZAux_Direct_SetRsLimit(g_handle,2,z.fuxianwei);        // 设置负限位
     ZAux_Direct_SetFwdIn(g_handle,2,z.zhengxianwei_IO);     // 设置正限位IO
     ZAux_Direct_SetRevIn(g_handle,2,z.fuxianwei_IO);        // 设置负限位IO
     ZAux_Direct_SetDatumIn(g_handle,2,0);                    // 回零IO
@@ -278,7 +283,124 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 
 }
+int states_flag[3];
 
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+
+    if(m_timerid == event->timerId())
+    {
+        int idle[3] = {1, 1, 1};
+        ZAux_Direct_GetIfIdle(g_handle,0,&idle[0]);//获得x轴状态
+            if(idle[0])
+            {
+                ui->X_ZT->setText("停止");
+            }
+            else
+            {
+                ui->X_ZT->setText("运行");
+            }
+        ZAux_Direct_GetDpos(g_handle, 0, &x.pos);
+        ui->X_ZB->setText(QString("%1mm").arg(x.pos));
+        ZAux_Direct_GetMspeed(g_handle, 0, &x.fvspeed);
+        ui->X_SD->setText(QString("%1mm/s").arg(x.fvspeed));
+
+        ZAux_Direct_GetIfIdle(g_handle,1,&idle[1]);//获得y轴状态
+        if(idle[1])
+        {
+            ui->Y_ZT->setText("停止");
+        }
+        else
+        {
+            ui->Y_ZT->setText("运行");
+        }
+        ZAux_Direct_GetDpos(g_handle, 1, &y.pos);
+        ui->Y_ZB->setText(QString("%1mm").arg(y.pos));
+        ZAux_Direct_GetMspeed(g_handle, 1, &y.fvspeed);
+        ui->Y_SD->setText(QString("%1mm/s").arg(y.fvspeed));
+
+        ZAux_Direct_GetIfIdle(g_handle,2,&idle[2]);//获得z轴状态
+        if(idle[2])
+        {
+            ui->Z_ZT->setText("停止");
+        }
+        else
+        {
+            ui->Z_ZT->setText("运行");
+        }
+        ZAux_Direct_GetDpos(g_handle, 2, &z.pos);
+        ui->Z_ZB->setText(QString("%1mm").arg(z.pos));
+        ZAux_Direct_GetMspeed(g_handle, 2, &z.fvspeed);
+        ui->Z_SD->setText(QString("%1mm/s").arg(z.fvspeed));
+    }
+    float zhengxianwei;
+    float fuxianwei;
+    ZAux_Direct_GetFsLimit(g_handle,0,&zhengxianwei);//x轴限位判断小灯报警
+    ZAux_Direct_GetRsLimit(g_handle,0,&fuxianwei);
+
+    if(x.pos>zhengxianwei)
+    {
+        states_flag[0]=1;
+        ui->X_plus->setStyleSheet("image: url(:/pic/red.png)");
+    }
+    else if(x.pos<fuxianwei)
+    {
+        states_flag[0]=1;
+        ui->X_sub->setStyleSheet("image: url(:/pic/red.png)");
+    }
+    else if(x.pos<zhengxianwei&&x.pos>fuxianwei)
+    {
+        states_flag[0]=-1;
+        ui->X_plus->setStyleSheet("image: url(:/pic/green.png)");
+        ui->X_sub->setStyleSheet("image: url(:/pic/green.png)");
+    }
+    ZAux_Direct_GetFsLimit(g_handle,1,&zhengxianwei);//y轴限位判断小灯报警
+    ZAux_Direct_GetRsLimit(g_handle,1,&fuxianwei);
+    if(y.pos>zhengxianwei)
+    {
+
+        states_flag[1]=1;
+        ui->Y_plus->setStyleSheet("image: url(:/pic/red.png)");
+    }
+    else if(y.pos<fuxianwei)
+    {
+        states_flag[1]=1;
+        ui->Y_sub->setStyleSheet("image: url(:/pic/red.png)");
+    }
+    else if(y.pos<zhengxianwei&&y.pos>fuxianwei)
+    {
+        states_flag[1]=-2;
+        ui->Y_plus->setStyleSheet("image: url(:/pic/green.png)");
+        ui->Y_sub->setStyleSheet("image: url(:/pic/green.png)");
+    }
+    ZAux_Direct_GetFsLimit(g_handle,2,&zhengxianwei);//z轴限位判断小灯报警
+    ZAux_Direct_GetRsLimit(g_handle,2,&fuxianwei);
+    if(z.pos>zhengxianwei)
+    {
+        states_flag[2]=1;
+        ui->Z_plus->setStyleSheet("image: url(:/pic/red.png)");
+        ui->STOP->setStyleSheet("image: url(:/red.png)");
+    }
+    else if(z.pos<fuxianwei)
+    {
+        states_flag[2]=1;
+        ui->Z_sub->setStyleSheet("image: url(:/pic/red.png)");
+    }
+    else if(z.pos<zhengxianwei&&z.pos>fuxianwei)
+    {
+        states_flag[2]=-3;
+        ui->Z_plus->setStyleSheet("image: url(:/pic/green.png)");
+        ui->Z_sub->setStyleSheet("image: url(:/pic/green.png)");
+    }
+    if(states_flag[0]==-1&&states_flag[1]==-2&&states_flag[2]==-3)
+    {
+        ui->STOP->setStyleSheet("image: url(:/pic/green.png)");
+    }
+    else
+    {
+        ui->STOP->setStyleSheet("image: url(:/pic/red.png)");
+    }
+}
 //x轴回0
 void MainWindow::on_pushButton_4_clicked()
 {
@@ -314,9 +436,8 @@ void MainWindow::on_pushButton_6_clicked()
 //坐标置零
 void MainWindow::on_pushButton_7_clicked()
 {
-    x.pos=0;
-    y.pos=0;
-    z.pos=0;
+    ZMC_Execute(g_handle,"MPOS=0,0,0",10,nullptr,0);
+    ZMC_Execute(g_handle,"DPOS=0,0,0",10,nullptr,0);
 }
 //三轴运动函数
 void MainWindow::yqianjin(){
@@ -451,5 +572,455 @@ void MainWindow::Sleep(int msec)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
+void MainWindow::on_checkBox_2_clicked()//限位反转
+{
+    int ionum[6];
+    ionum[0]=x.zhengxianwei_IO;
+    ionum[1]=x.fuxianwei_IO;
+    ionum[2]=y.zhengxianwei_IO;
+    ionum[3]=y.fuxianwei_IO;
+    ionum[4]=z.zhengxianwei_IO;
+    ionum[5]=z.fuxianwei_IO;
+    if(ui->checkBox_2->isChecked()==1)
+    {
+        for(int i=0;i<=5;i++){
+            ZAux_Direct_SetInvertIn(g_handle,ionum[i],1);
+        }
+        ui->checkBox_2->clearFocus();
+    }
+    else if(ui->checkBox_2->isChecked()==0)
+    {
+        for(int i=0;i<=5;i++){
+            ZAux_Direct_SetInvertIn(g_handle,ionum[i],0);
+        }
+    }
+}
 
 
+void MainWindow::on_checkBox_clicked()//制动反转
+{
+    if(ui->checkBox->isChecked()==1)
+    {
+        int ionum=-1;
+        ZAux_Direct_SetInvertIn(g_handle,ionum,1);
+    }
+    if(ui->checkBox->isChecked()==0)
+    {
+        int ionum=-1;
+        ZAux_Direct_SetInvertIn(g_handle,ionum,0);
+    }
+}
+//导入文件
+
+void MainWindow::on_Button__clicked()
+{
+    g_command[0]=0;
+    g_command[1]=0;//8.3默认G00
+    g_0full=0; g_1full=0; g_mode=90;//默认没有出现G90/G91,默认坐标移动为绝对值
+    m_aspeed=100.0;
+    xyz_pos[0]=0.0;//目标点
+    xyz_pos[1]=0.0;
+    xyz_pos[2]=0.0;
+
+    zhongduan_biaozhi=0;
+    hangshu=0;
+    ui->num_jindu->setText("0");
+    ui->num_yiyongshijian->setText(QString::number(0));//已用时间
+    ui->num_shengyushijian->setText(QString::number(0));//剩余时间
+    ui->num_daimazongshu->setText(QString::number(0));//显示当前文件行数
+    ui->textedit_file->clear();
+    QString fileName, filePath,fileSuffix;
+    QFileInfo fileinfo;
+    fileFull = QFileDialog::getOpenFileName(this,tr("file"),"/",tr("text(*.tap)"));  //获取整个文件名，打开tap文件
+    //fileFull = E:\QtCode\newExample\myTry\新建文本文档.txt
+
+    //获取文件信息
+    fileinfo = QFileInfo(fileFull);
+
+    //获取文件名字
+    fileName = fileinfo.fileName();
+
+    //获取文件后缀
+    fileSuffix = fileinfo.suffix();
+
+    //获取文件绝对路径
+    filePath = fileinfo.absolutePath();
+    if(!fileFull.isNull())
+    {
+        ui->Button_start->setEnabled(true);
+        ui->Button_stop->setEnabled(true);
+       ui->Button_continue->setEnabled(true);
+       ui->Button_clean->setEnabled(true);
+        ui->Button_jiyi->setEnabled(true);
+       ui->Button_huifu->setEnabled(true);
+        QFile file(fileFull);//通过文件路径，来获取文件
+        if(!file.open(QFile::ReadOnly ))
+        {
+            QMessageBox::warning(this,tr("Error"),tr("read file error:&1").arg(file.errorString()));
+            return;
+        }
+        QTextStream in(&file);
+
+        ui->textedit_file->setText(fileFull);
+        //逐行读取文件并放入wen'ben'kuan文本框
+        QTextCodec *codec = QTextCodec::codecForName("GBK");//指定为GBK,因为file.readLine()无法读取中文
+        while (!file.atEnd())
+        {
+
+            //读取一行文本数据
+            QByteArray line = file.readLine();
+            //将读取到的行数据转换为Unicode
+            QString str = codec->toUnicode(line);       //文件每一行内容
+            //qDebug() << str;
+
+            ui->textedit_file->insertPlainText(str);//追加放入文本框②
+
+            hangshu++;
+        }
+        file.close();
+        ui->num_daimazongshu->setText(QString::number(hangshu));//显示当前文件行数
+
+    }
+    else
+    {
+        qDebug()<<"cancel";
+        fileFull="No file";
+    }
+
+}
+
+
+
+
+//开始制作
+void MainWindow::on_Button_start_clicked()
+{
+    zhongduan_biaozhi=1;
+    iiiii=1;
+    ui->textedit_file->moveCursor(QTextCursor::Start);//进度条滚到顶
+
+    //通过文件路径，来获取文件
+    fileread=new QFile(fileFull);
+    if(!fileread->open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::warning(this,tr("Error"),tr("read file error:&1").arg(fileread->errorString()));
+        return;
+    }
+    //显示初始化
+    hangshu=0;
+    ui->num_jindu->setText(0);
+    ui->num_yiyongshijian->setText(QString::number(0));//已用时间
+    ui->num_shengyushijian->setText(QString::number(0));//剩余时间
+    ui->num_daimazongshu->setText(QString::number(0));//显示当前文件行数
+    ui->textedit_file->clear();
+
+    if(!fileFull.isNull())
+    {
+
+        QFile file(fileFull);//通过文件路径，来获取文件
+        if(!file.open(QFile::ReadOnly | QFile::Text))
+        {
+            QMessageBox::warning(this,tr("Error"),tr("read file error:&1").arg(file.errorString()));
+            return;
+        }
+        QTextStream in(&file);
+
+
+        //逐行读取文件并放入wen'ben'kuan文本框
+        QTextCodec *codec = QTextCodec::codecForName("GBK");//指定为GBK,因为file.readLine()无法读取中文
+        while (!file.atEnd())
+        {
+
+            //读取一行文本数据
+            QByteArray line = file.readLine();
+            //将读取到的行数据转换为Unicode
+            QString str = codec->toUnicode(line);       //文件每一行内容
+            ui->textedit_file->insertPlainText(str);//追加放入文本框②
+            hangshu++;
+        }
+        //  file.close();
+        ui->num_daimazongshu->setText(QString::number(hangshu));//显示当前文件行数
+        Readcode_G();
+    }
+    else
+    {
+        fileFull="No file";
+    }
+
+}
+void MainWindow::Readcode_G()  //带未选择文件检测
+{
+    if(fileFull=="No file"){ui->textedit_file->setPlainText("No file");}
+    else
+    {
+        ui->textedit_file->moveCursor(QTextCursor::Start);//进度条滚到顶
+        QTextCodec *codec = QTextCodec::codecForName("GBK");//指定为GBK,因为file.readLine()无法读取中文
+
+        //通过文件路径，来获取文件
+        QFile fileread(fileFull);
+        if(!fileread.open(QFile::ReadOnly | QFile::Text))
+        {
+            QMessageBox::warning(this,tr("Error"),tr("read file error:&1").arg(fileread.errorString()));
+            return;
+        }
+
+
+        char* fileat;//用来指向每行的某个字符
+        QString str;
+        float i=1;int row=0;int lie=0;
+        QTextCursor cursor;
+        while(i<=hangshu)
+        {
+
+            //字体的颜色
+            ui->textedit_file->setTextColor("black");
+
+            //设置选中行的颜色
+            fmt.setForeground(QColor(Qt::green));
+
+            //移动光标到某行行首
+            QTextBlock block = ui->textedit_file->document()->findBlockByNumber(i-1);
+            ui->textedit_file->setTextCursor(QTextCursor(block));
+
+            //上色
+            cursor = ui->textedit_file->textCursor();
+            cursor.select(QTextCursor::LineUnderCursor);   //选中要着色的内容
+            cursor.mergeCharFormat(fmt);    //设置文本格式
+            cursor.clearSelection(); //撤销选中
+
+            //获取光标所在行列
+            row=cursor.blockNumber();
+            lie=cursor.columnNumber();
+            qDebug()<<row<<lie;
+
+
+            //读取一行文本数据
+            QByteArray lineread = fileread.readLine();
+            //将读取到的行数据转换为Unicode
+            str = codec->toUnicode(lineread);       //文件每一行内容
+            qDebug()<<str;
+            //   strcpy(str_char, str);
+            QByteArray ba = str.toUtf8();
+            fileat = ba.data();
+            qDebug()<<fileat;
+            for(;*fileat;fileat++)//依次对各个字符进行解析
+            {
+                switch(*fileat)
+                {
+                case 'G':
+                    if(g_0full==0)
+                    {   g_command[0] = atoi(fileat+1);g_0full=1;}
+                    else
+                    {   g_command[1]= atoi(fileat+1); g_1full=1;}
+                    break;
+                case 'F':
+                    m_aspeed  = atof(fileat+1);
+                    break;
+                case 'X':
+                    xyz_pos[0] = atof(fileat+1);
+                    break;
+                case 'Y':
+                    xyz_pos[1] = atof(fileat+1);
+                    break;
+                case 'Z':
+                    xyz_pos[2] = atof(fileat+1);
+                    break;
+                default: break;
+
+                }
+            }
+
+            ui->num_yiyongshijian->setText(QString::number(iiiii));//已用时间
+            ui->num_shengyushijian->setText(QString::number(hangshu-iiiii));//剩余时间
+            qDebug()<<g_command;
+            qDebug()<<m_aspeed;
+            qDebug()<<xyz_pos[0]<<xyz_pos[1]<<xyz_pos[2];
+
+            ui->num_jindu->setText("(iiiii/hangshu)*100");
+            iiiii++;
+
+             command_G();//运行对应运动函数
+             g_0full=0;
+             g_1full=0;
+        }
+        ui->textedit_file->setTextColor("black");
+
+    }
+
+}
+void MainWindow::command_G()
+{
+    int iiii=3; float poslist[3];
+    if(g_1full==0)
+    {
+        switch(g_command[0])
+        {
+        case 0:
+            //hcy*********************************************************************************开始
+            while(iiii){
+                poslist[iiii-1]=xyz_pos[iiii-1] ;
+                float s(lineedit_setspeed[1]->text().toFloat()) ;
+                if(m_aspeed>s)
+                { m_aspeed=s;}
+
+                ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+
+                iiii--;
+            }
+            switch(g_mode)
+            {
+            case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+            case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+            default:break;
+            }
+            //qDebug()<<poslist;
+            //qDebug()<<g_mode;
+            //glwidget->g_mode00or01=0;
+            break;
+
+        case 1:
+            while(iiii){
+                poslist[iiii-1]=xyz_pos[iiii-1] ;
+                float s(lineedit_setspeed[0]->text().toFloat()) ;
+                if(m_aspeed>s)
+                { m_aspeed=s;}
+                ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+
+
+                iiii--;
+            }
+            switch(g_mode)
+            {
+            case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+            case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+            default:break;
+            }
+            //qDebug()<<poslist;
+            //qDebug()<<g_mode;
+            //glwidget->g_mode00or01=1;
+            break;
+
+        default:break;
+            //hcy*********************************************************************************结束
+        }
+    }
+    else if(g_1full==1)
+    {
+        switch(g_command[0])
+        {
+        case 90:
+            g_mode=90;
+            switch(g_command[1])
+            {
+            case 0:
+                //hcy*********************************************************************************开始
+                while(iiii){
+                    poslist[iiii-1]=xyz_pos[iiii-1] ;
+                    float s(lineedit_setspeed[1]->text().toFloat()) ;
+                    if(m_aspeed>s)
+                    { m_aspeed=s;}
+
+                    ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+                    //if(m_aspeed)
+
+                    iiii--;
+                }
+                switch(g_mode)
+                {
+                case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+                case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+                default:break;
+                }
+                //qDebug()<<poslist;
+                //qDebug()<<g_mode;
+                //glwidget->g_mode00or01=0;
+                break;
+
+            case 1:
+                while(iiii){
+                    poslist[iiii-1]=xyz_pos[iiii-1] ;
+                    float s(lineedit_setspeed[0]->text().toFloat()) ;
+                    if(m_aspeed>s)
+                    { m_aspeed=s;}
+
+                    ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+
+
+                    iiii--;
+                }
+                //qDebug()<<poslist;
+                switch(g_mode)
+                {
+                case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+                case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+                default:break;
+                }
+                //qDebug()<<poslist;
+                //qDebug()<<g_mode;
+                //glwidget->g_mode00or01=1;
+                break;
+
+            default:break;
+                //hcy*********************************************************************************结束
+            }
+            break;
+
+        case 91:
+            g_mode=91;
+            switch(g_command[1])
+            {
+            case 0:
+                //hcy*********************************************************************************开始
+                while(iiii){
+                    poslist[iiii-1]=xyz_pos[iiii-1] ;
+                    float s(lineedit_setspeed[1]->text().toFloat()) ;
+                    if(m_aspeed>s)
+                    { m_aspeed=s;}
+
+                    ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+
+                    iiii--;
+                }
+                switch(g_mode)
+                {
+                case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+                case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+                default:break;
+                }
+                //qDebug()<<poslist;
+                // qDebug()<<g_mode;
+                //glwidget->g_mode00or01=0;
+                break;
+
+            case 1:
+                while(iiii){
+                    poslist[iiii-1]=xyz_pos[iiii-1] ;
+                    float s(lineedit_setspeed[0]->text().toFloat()) ;
+                    if(m_aspeed>s)
+                    { m_aspeed=s;}
+
+                    ZAux_Direct_SetSpeed(g_handle,iiii-1,m_aspeed);//设置速度
+
+
+                    iiii--;
+                }
+                switch(g_mode)
+                {
+                case 90:ZAux_Direct_MoveAbs(g_handle,3,poslist);break;
+                case 91:ZAux_Direct_Move(g_handle,3,poslist);break;
+                default:break;
+                }
+                //qDebug()<<poslist;
+                //qDebug()<<g_mode;
+                //glwidget->g_mode00or01=1;
+                break;
+
+            default:break;
+                //hcy*********************************************************************************结束
+            }
+            break;
+
+        default:break;
+        }
+    }
+}

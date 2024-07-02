@@ -20,5 +20,9 @@
         <file>pic/close1.png</file>
         <file>pic/github.png</file>
         <file>pic/help.png</file>
+        <file>pic/green.png</file>
+        <file>pic/grey.png</file>
+        <file>pic/red.png</file>
+        <file>red.png</file>
     </qresource>
 </RCC>
