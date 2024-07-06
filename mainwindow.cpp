@@ -23,8 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label_30->setStyleSheet("color: red");
     ui->ButtonZD->setEnabled(1);
     ui->ButtonSD->setEnabled(1);
-    ui->toolButton_W->setShortcut(Qt::Key_W);
-    ui->toolButton_S->setShortcut(Qt::Key_S);
+    //ui->toolButton_W->setShortcut(Qt::Key_W);
     //ui->X_plus->setStyleSheet("image: url(:/pic/green.png)");
 
 }
@@ -50,6 +49,13 @@ void MainWindow::on_ButtonZD_clicked()
 
 void MainWindow::on_ButtonSD_clicked()
 {
+    if(ui->pushButton_10->isEnabled()==1)
+    {
+        war.setWindowTitle("提示");
+        war.setText("请先应用设置！");
+        war.exec();
+    }
+    else
     ui->stackedWidget->setCurrentIndex(2);
 }
 
@@ -201,6 +207,7 @@ void MainWindow::on_pushButton_3_clicked()
     war.setWindowTitle("提示");
     war.setText("参数保存成功！");
     war.exec();
+    ui->pushButton_3->setEnabled(0);
 
 }
 
@@ -269,25 +276,171 @@ void MainWindow::on_pushButton_10_clicked()
     ZAux_Direct_SetRevIn(g_handle,2,z.fuxianwei_IO);        // 设置负限位IO
     ZAux_Direct_SetDatumIn(g_handle,2,0);                    // 回零IO
     ZAux_Direct_SetAlmIn(g_handle,2,-1);                    // 设置急停
-
-    war.setText("11");
+    war.setWindowTitle("提示");
+    war.setText("参数应用成功！");
     war.exec();
+    ui->pushButton_10->setEnabled(0);
 }
-
+int wKeyPressed=0;
 // 待写，好像可以简化
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key()==Qt::Key_A)
+    if (event->key() == Qt::Key_W && !event->isAutoRepeat())
     {
 
+        if (!wKeyPressed)
+        {
+            ui->toolButton_W->setStyleSheet("border-image: url(:/pic/up.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            yqianjin();
+        }
+    }
+    else if (event->key() == Qt::Key_S && !event->isAutoRepeat())
+    {
+        if (!wKeyPressed)
+        {
+            ui->toolButton_S->setStyleSheet("border-image: url(:/pic/down.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            yhoutui();
+        }
+    }
+    else if (event->key() == Qt::Key_A && !event->isAutoRepeat())
+    {
+        if (!wKeyPressed)
+        {
+            ui->toolButton_A->setStyleSheet("border-image: url(:/pic/left.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            xhoutui();
+        }
+    }
+    else if (event->key() == Qt::Key_D && !event->isAutoRepeat())
+    {
+        if (!wKeyPressed)
+        {
+            ui->toolButton_D->setStyleSheet("border-image: url(:/pic/right.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            xqianjin();
+        }
+    }
+    else if (event->key() == Qt::Key_H && !event->isAutoRepeat())
+    {
+        if (!wKeyPressed)
+        {
+            ui->toolButton_H->setStyleSheet("border-image: url(:/pic/high.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            zqianjin();
+        }
+    }
+    else if (event->key() == Qt::Key_L && !event->isAutoRepeat())
+    {
+        if (!wKeyPressed)
+        {
+            ui->toolButton_L->setStyleSheet("border-image: url(:/pic/low.png);border-radius:15px;background-color: rgba(227, 175, 172, 200);");
+            wKeyPressed = 1;
+            zhoutui();
+        }
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    if ((event->key() == Qt::Key_W||event->key() == Qt::Key_S) && !event->isAutoRepeat())
+    {
+        ui->toolButton_W->setStyleSheet(
+           "#toolButton_W{"
+                "border-image: url(:/pic/up.png);"
+                "border-radius:15px;"
+                "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_W:pressed{"
+                " border:3px solid #b1764c;"
+                "    color:#dfdcd7;"
+                "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        ui->toolButton_S->setStyleSheet(
+            "#toolButton_S{"
+            "border-image: url(:/pic/down.png);"
+            "border-radius:15px;"
+            "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_S:pressed{"
+            " border:3px solid #b1764c;"
+            "    color:#dfdcd7;"
+            "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        wKeyPressed = false;
+        yting();
+    }
+    else if ((event->key() == Qt::Key_A||event->key() == Qt::Key_D) && !event->isAutoRepeat())
+    {
+        ui->toolButton_A->setStyleSheet(
+            "#toolButton_A{"
+            "border-image: url(:/pic/left.png);"
+            "border-radius:15px;"
+            "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_A:pressed{"
+            " border:3px solid #b1764c;"
+            "    color:#dfdcd7;"
+            "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        ui->toolButton_D->setStyleSheet(
+            "#toolButton_D{"
+            "border-image: url(:/pic/right.png);"
+            "border-radius:15px;"
+            "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_D:pressed{"
+            " border:3px solid #b1764c;"
+            "    color:#dfdcd7;"
+            "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        wKeyPressed = false;
+        xting();
+    }
+    else if ((event->key() == Qt::Key_H||event->key() == Qt::Key_L) && !event->isAutoRepeat())
+    {
+        ui->toolButton_H->setStyleSheet(
+            "#toolButton_H{"
+            "border-image: url(:/pic/high.png);"
+            "border-radius:15px;"
+            "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_H:pressed{"
+            " border:3px solid #b1764c;"
+            "    color:#dfdcd7;"
+            "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        ui->toolButton_L->setStyleSheet(
+            "#toolButton_L{"
+            "border-image: url(:/pic/low.png);"
+            "border-radius:15px;"
+            "background-color: rgba(100, 150, 200, 100);"
+            "}"
+            "#toolButton_L:pressed{"
+            " border:3px solid #b1764c;"
+            "    color:#dfdcd7;"
+            "background-color: rgba(144, 144, 144, 200);"
+            "}"
+            );
+        wKeyPressed = false;
+        zting();
     }
 
+
 }
+
 int states_flag[3];
 
 void MainWindow::timerEvent(QTimerEvent *event)
 {
 
+    float bbbb;
     if(m_timerid == event->timerId())
     {
         int idle[3] = {1, 1, 1};
@@ -332,6 +485,89 @@ void MainWindow::timerEvent(QTimerEvent *event)
         ui->Z_ZB->setText(QString("%1mm").arg(z.pos));
         ZAux_Direct_GetMspeed(g_handle, 2, &z.fvspeed);
         ui->Z_SD->setText(QString("%1mm/s").arg(z.fvspeed));
+
+        if(zhongduan_biaozhi==1&&idle[0]&&idle[1]&&idle[2])
+        {
+            if(fileFull=="No file"){ui->textedit_file->setPlainText("No file");}
+            else
+            {
+                QTextCodec *codec = QTextCodec::codecForName("GBK");//指定为GBK,因为file.readLine()无法读取中文
+
+                static char* fileat;//用来指向每行的某个字符
+                static QString str;
+
+
+                if(iiiii<=hangshu)
+                {
+                    ui->textedit_file->setTextColor("black");
+                    fmt.setForeground(QColor(Qt::green));
+                    //移动光标到某行行首
+                    QTextBlock block = ui->textedit_file->document()->findBlockByNumber(iiiii-1);
+                    ui->textedit_file->setTextCursor(QTextCursor(block));
+                    //上色
+                    cursor = ui->textedit_file->textCursor();
+                    cursor.select(QTextCursor::LineUnderCursor);   //选中要着色的内容
+                    cursor.mergeCharFormat(fmt);    //设置文本格式
+                    cursor.clearSelection(); //撤销选中
+                    //获取光标所在行列
+                    row=cursor.blockNumber();
+                    lie=cursor.columnNumber();
+                    //qDebug()<<row<<lie;
+                    //读取一行文本数据
+                    QByteArray lineread = fileread->readLine();
+                    //将读取到的行数据转换为Unicode
+                    str = codec->toUnicode(lineread);       //文件每一行内容
+                    //qDebug()<<str;
+                    QByteArray ba = str.toUtf8();
+                    fileat = ba.data();
+                    //qDebug()<<fileat;
+                    for(;*fileat;fileat++)//依次对各个字符进行解析
+                    {
+                        switch(*fileat)
+                        {
+                        case 'G':
+                            if(g_0full==0)
+                            {   g_command[0] = atoi(fileat+1);g_0full=1;}
+                            else if(g_1full==0)
+                            {   g_command[1]= atoi(fileat+1); g_1full=1;}
+                            break;
+                        case 'F':
+                            m_aspeed  = atof(fileat+1);
+                            break;
+                        case 'X':
+                            xyz_pos[0] = atof(fileat+1);
+                            break;
+                        case 'Y':
+                            xyz_pos[1] = atof(fileat+1);
+                            break;
+                        case 'Z':
+                            xyz_pos[2] = atof(fileat+1);
+                            break;
+                        case'M':
+                            Modbus=atoi(fileat+1);//command_M();//开刀或关刀
+                        default: break;
+
+                        }
+                    }
+
+                    ui->num_yiyongshijian->setText(QString::number(iiiii));//已用时间
+                    ui->num_shengyushijian->setText(QString::number(hangshu-iiiii));//剩余时间
+                    bbbb=(iiiii/hangshu)*100;
+
+                    QString ccc=QString::number(bbbb,'f',2);
+                    ui->num_jindu->setText(ccc+"%");
+
+                    iiiii++;
+
+                    //command_G();//运行对应运动函数
+
+                    g_0full=0;
+                    g_1full=0;
+                }
+                ui->textedit_file->setTextColor("black");
+            }
+        }
+
     }
     float zhengxianwei;
     float fuxianwei;
@@ -400,6 +636,9 @@ void MainWindow::timerEvent(QTimerEvent *event)
     {
         ui->STOP->setStyleSheet("image: url(:/pic/red.png)");
     }
+
+
+
 }
 //x轴回0
 void MainWindow::on_pushButton_4_clicked()
@@ -441,9 +680,11 @@ void MainWindow::on_pushButton_7_clicked()
 }
 //三轴运动函数
 void MainWindow::yqianjin(){
+    qDebug()<<"www";
     ZAux_Direct_Singl_Vmove(g_handle,1,1);
 }
 void MainWindow::yhoutui(){
+    qDebug()<<"sss";
      ZAux_Direct_Singl_Vmove(g_handle,1,-1);
 }
 void MainWindow::xqianjin(){
@@ -462,6 +703,7 @@ void MainWindow::xting(){
     ZAux_Direct_Singl_Cancel(g_handle,0,2);
 }
 void MainWindow::yting(){
+    qDebug()<<"yting";
     ZAux_Direct_Singl_Cancel(g_handle,1,2);
 }
 void MainWindow::zting(){
@@ -470,6 +712,7 @@ void MainWindow::zting(){
 //y轴前进
 void MainWindow::on_toolButton_W_pressed()
 {
+
     yqianjin();
 }
 
@@ -690,8 +933,6 @@ void MainWindow::on_Button__clicked()
 }
 
 
-
-
 //开始制作
 void MainWindow::on_Button_start_clicked()
 {
@@ -740,111 +981,10 @@ void MainWindow::on_Button_start_clicked()
         }
         //  file.close();
         ui->num_daimazongshu->setText(QString::number(hangshu));//显示当前文件行数
-        Readcode_G();
     }
     else
     {
         fileFull="No file";
-    }
-
-}
-void MainWindow::Readcode_G()  //带未选择文件检测
-{
-    if(fileFull=="No file"){ui->textedit_file->setPlainText("No file");}
-    else
-    {
-        ui->textedit_file->moveCursor(QTextCursor::Start);//进度条滚到顶
-        QTextCodec *codec = QTextCodec::codecForName("GBK");//指定为GBK,因为file.readLine()无法读取中文
-
-        //通过文件路径，来获取文件
-        QFile fileread(fileFull);
-        if(!fileread.open(QFile::ReadOnly | QFile::Text))
-        {
-            QMessageBox::warning(this,tr("Error"),tr("read file error:&1").arg(fileread.errorString()));
-            return;
-        }
-
-
-        char* fileat;//用来指向每行的某个字符
-        QString str;
-        float i=1;int row=0;int lie=0;
-        QTextCursor cursor;
-        while(i<=hangshu)
-        {
-
-            //字体的颜色
-            ui->textedit_file->setTextColor("black");
-
-            //设置选中行的颜色
-            fmt.setForeground(QColor(Qt::green));
-
-            //移动光标到某行行首
-            QTextBlock block = ui->textedit_file->document()->findBlockByNumber(i-1);
-            ui->textedit_file->setTextCursor(QTextCursor(block));
-
-            //上色
-            cursor = ui->textedit_file->textCursor();
-            cursor.select(QTextCursor::LineUnderCursor);   //选中要着色的内容
-            cursor.mergeCharFormat(fmt);    //设置文本格式
-            cursor.clearSelection(); //撤销选中
-
-            //获取光标所在行列
-            row=cursor.blockNumber();
-            lie=cursor.columnNumber();
-            qDebug()<<row<<lie;
-
-
-            //读取一行文本数据
-            QByteArray lineread = fileread.readLine();
-            //将读取到的行数据转换为Unicode
-            str = codec->toUnicode(lineread);       //文件每一行内容
-            qDebug()<<str;
-            //   strcpy(str_char, str);
-            QByteArray ba = str.toUtf8();
-            fileat = ba.data();
-            qDebug()<<fileat;
-            for(;*fileat;fileat++)//依次对各个字符进行解析
-            {
-                switch(*fileat)
-                {
-                case 'G':
-                    if(g_0full==0)
-                    {   g_command[0] = atoi(fileat+1);g_0full=1;}
-                    else
-                    {   g_command[1]= atoi(fileat+1); g_1full=1;}
-                    break;
-                case 'F':
-                    m_aspeed  = atof(fileat+1);
-                    break;
-                case 'X':
-                    xyz_pos[0] = atof(fileat+1);
-                    break;
-                case 'Y':
-                    xyz_pos[1] = atof(fileat+1);
-                    break;
-                case 'Z':
-                    xyz_pos[2] = atof(fileat+1);
-                    break;
-                default: break;
-
-                }
-            }
-
-            ui->num_yiyongshijian->setText(QString::number(iiiii));//已用时间
-            ui->num_shengyushijian->setText(QString::number(hangshu-iiiii));//剩余时间
-            qDebug()<<g_command;
-            qDebug()<<m_aspeed;
-            qDebug()<<xyz_pos[0]<<xyz_pos[1]<<xyz_pos[2];
-
-            ui->num_jindu->setText("(iiiii/hangshu)*100");
-            iiiii++;
-
-             command_G();//运行对应运动函数
-             g_0full=0;
-             g_1full=0;
-        }
-        ui->textedit_file->setTextColor("black");
-
     }
 
 }
@@ -1024,3 +1164,75 @@ void MainWindow::command_G()
         }
     }
 }
+//暂停
+
+
+
+void MainWindow::Pause()
+{
+    zhongduan_biaozhi=0;
+    ZAux_Direct_MovePause(g_handle,0);
+    ui->Button_clean->setEnabled(false);
+    ui->Button_start->setEnabled(false);
+    ui->Button_huifu->setEnabled(false);//8.11
+}
+void MainWindow::Continue()
+{
+    zhongduan_biaozhi=1;
+    ZAux_Direct_MoveResume(g_handle);
+    ui->Button_clean->setEnabled(true);
+    ui->Button_start->setEnabled(true);
+    ui->Button_huifu->setEnabled(true);
+}
+
+void MainWindow::clean()
+{
+    float poslist[3]={0,0,0};
+    ZAux_Direct_MoveAbs(g_handle,3,poslist);
+
+
+}
+
+void MainWindow::jiyi()
+{
+    float fdpos(0);
+    for(int i=0;i<3;i++)
+    {
+        ZAux_Direct_GetDpos(g_handle,i,&fdpos);//获得轴位置
+        daodianjiyi[i]=fdpos ;
+    }
+}
+void MainWindow::huifu()
+{
+    ZAux_Direct_MoveAbs(g_handle,3,daodianjiyi);
+}
+
+void MainWindow::on_Button_stop_clicked()
+{
+    Pause();
+}
+
+
+void MainWindow::on_Button_continue_clicked()
+{
+    Continue();
+}
+
+
+void MainWindow::on_Button_clean_clicked()
+{
+    clean();
+}
+
+
+void MainWindow::on_Button_jiyi_clicked()
+{
+    jiyi();
+}
+
+
+void MainWindow::on_Button_huifu_clicked()
+{
+    huifu();
+}
+

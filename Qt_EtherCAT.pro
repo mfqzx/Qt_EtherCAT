@@ -10,6 +10,7 @@ CONFIG += c++17
 
 #LIBS += ./zmotion.so
 SOURCES += \
+    dialog.cpp \
     login.cpp \
     loginaaaa.cpp \
     main.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
     zaux.cpp
 
 HEADERS += \
+    dialog.h \
     includes/zmotion.h \
     login.h \
     loginaaaa.h \
@@ -25,6 +27,7 @@ HEADERS += \
     zmotion.h
 
 FORMS += \
+    dialog.ui \
     loginaaaa.ui \
     mainwindow.ui
 

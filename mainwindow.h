@@ -8,8 +8,8 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QTime>
-#include <QTextCharFormat>
 #include <QLineEdit>
+#include <QTimerEvent>
 extern ZMC_HANDLE g_handle;
 
 QT_BEGIN_NAMESPACE
@@ -67,6 +67,8 @@ private slots:
     void timerEvent(QTimerEvent *event);
 
     void keyPressEvent(QKeyEvent *event);
+
+    void keyReleaseEvent(QKeyEvent *event);
 
     void links();
 
@@ -143,8 +145,22 @@ private slots:
     void on_Button__clicked();
 
     void on_Button_start_clicked();
-    void Readcode_G();
     void  command_G();
+    void Pause();
+    void Continue();
+    void clean();
+    void jiyi();
+    void huifu();
+
+    void on_Button_stop_clicked();
+
+    void on_Button_continue_clicked();
+
+    void on_Button_clean_clicked();
+
+    void on_Button_jiyi_clicked();
+
+    void on_Button_huifu_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -166,6 +182,7 @@ private:
     float xyz_pos[3]={0.0,0.0,0.0};//目标点
     float daodianjiyi[3];
     bool  zhongduan_biaozhi;
+     QTextCursor cursor;
         float hangshu=0;
     QString fileFull="No file";
         QFile* fileread;

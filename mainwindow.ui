@@ -1639,7 +1639,15 @@ background-color: rgba(177, 177, 177, 200);
                   </layout>
                  </item>
                  <item row="4" column="0" colspan="2">
-                  <widget class="QTextBrowser" name="textedit_file"/>
+                  <widget class="QTextBrowser" name="textedit_file">
+                   <property name="styleSheet">
+                    <string notr="true">#textedit_file
+{
+	background-color: rgba(0, 0, 0, 150);
+
+}</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -1845,6 +1853,12 @@ background-color: rgba(212, 238, 255, 200);
                    <string notr="true">#toolButton_D {border-image: url(:/pic/right.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
+}
+#toolButton_D:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	background-color: rgba(144, 144, 144, 200);
 }</string>
                   </property>
                   <property name="text">
@@ -1904,6 +1918,12 @@ background-color: rgba(100, 150, 200, 100);
                    <string notr="true">#toolButton_L {border-image: url(:/pic/low.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
+}
+#toolButton_L:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	background-color: rgba(144, 144, 144, 200);
 }</string>
                   </property>
                   <property name="text">
@@ -1929,6 +1949,13 @@ background-color: rgba(100, 150, 200, 100);
                    <string notr="true">#toolButton_A {border-image: url(:/pic/left.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
+}
+#toolButton_A:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	
+	background-color: rgba(144, 144, 144, 200);
 }</string>
                   </property>
                   <property name="text">
@@ -1964,10 +1991,18 @@ background-color: rgba(100, 150, 200, 100);
                    </size>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">#toolButton_W{border-image: url(:/pic/up.png);
+                   <string notr="true">#toolButton_W{
+border-image: url(:/pic/up.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
-}</string>
+}
+#toolButton_W:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	background-color: rgba(144, 144, 144, 200);
+}
+</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -1992,6 +2027,12 @@ background-color: rgba(100, 150, 200, 100);
                    <string notr="true">#toolButton_H {border-image: url(:/pic/high.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
+}
+#toolButton_H:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	background-color: rgba(144, 144, 144, 200);
 }</string>
                   </property>
                   <property name="text">
@@ -2056,6 +2097,12 @@ background-color: rgba(100, 150, 200, 100);
                    <string notr="true">#toolButton_S {border-image: url(:/pic/down.png);
 border-radius:15px;
 background-color: rgba(100, 150, 200, 100);
+}
+#toolButton_S:pressed{
+  border:3px solid #b1764c;
+    color:#dfdcd7;
+	
+	background-color: rgba(144, 144, 144, 200);
 }</string>
                   </property>
                   <property name="text">
